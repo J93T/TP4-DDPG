@@ -8,9 +8,10 @@ class ReplayBuffer():
     a = action used
     r = reward
     s' = next state
+    t = terminal boolean
     """
-    def __init__():
-	pass
+    def __init__(self):
+        pass
 
 
     def add_sample(self, sample):
