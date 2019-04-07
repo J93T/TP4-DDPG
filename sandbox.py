@@ -4,6 +4,7 @@ from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
 
 env = gym.make('Pendulum-v0')
+env = gym.make('HalfCheetah-v2')
 # Reproducability
 env.seed(1)
 
@@ -31,6 +32,7 @@ for e in range(num_episodes):
 
         # Get action from Actor
         a = actor.predict(s)
+        a = env.action_space.sample()
 
         # Execute action, receive transition
         s_next, r, done, _ = env.step(a)
