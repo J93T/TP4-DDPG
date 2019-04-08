@@ -3,6 +3,7 @@ from models.critic import Critic
 from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
 from ddpg import DDPGAgent
+import numpy as np
 
 env = gym.make('Pendulum-v0')
 #env = gym.make('CarRacing-v0')
@@ -10,10 +11,6 @@ env = gym.make('Pendulum-v0')
 #env = gym.make('LunarLanderContinuous-v2')
 # Reproducability
 env.seed(1)
-
-print(env.action_space)
-exit()
-
 
 #------------------------------#
 #------Hyperparameters---------#
@@ -42,7 +39,6 @@ for e in range(num_episodes):
 
         # Get action from Actor
         a = agent.take_action(s)
-        a = env.action_space.sample()
 
         # Execute action, receive transition
         s_next, r, done, _ = env.step(a)
@@ -51,7 +47,7 @@ for e in range(num_episodes):
         agent.buffer_update([s, a, r, s_next, done])
 
         # Train critic and actor?
-        agent.update()
+        #agent.update()
 
         s = s_next
 

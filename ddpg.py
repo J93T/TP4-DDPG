@@ -25,7 +25,7 @@ class DDPGAgent():
     def take_action(self, state):
         # TODO Add noise according to OU-Process
         action = self.actor.predict(state, False)
-        return [action]
+        return action
 
     def buffer_update(self, sample):
 

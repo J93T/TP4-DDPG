@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import random
+from torch.autograd import Variable
+import numpy as np
 
 # Class creating the Actor
 # https://pytorch.org/docs/stable/nn.html
@@ -23,5 +25,7 @@ class Actor(nn.Module):
                                    nn.Sigmoid())
 
     def predict(self, state, target=False):
-        action = random.uniform(-2, 2)
+        state = np.reshape(state,(1,3))
+        s = Variable(torch.from_numpy(state)).float()
+        action = self.model(s).detach().numpy()
         return action

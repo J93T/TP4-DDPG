@@ -14,6 +14,8 @@ class Critic(nn.Module):
                                    nn.Linear(num_hidden, output_dim),
                                    nn.Sigmoid())
 
+
+
         self.target_model = nn.Sequential(nn.Linear(input_dim, num_hidden),
                                    nn.ReLU(),
                                    nn.Linear(num_hidden, output_dim),
