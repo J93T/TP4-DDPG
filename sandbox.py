@@ -2,9 +2,11 @@ import gym
 from models.critic import Critic
 from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
+from ddpg import DDPGAgent
 
 env = gym.make('Pendulum-v0')
-env = gym.make('HalfCheetah-v2')
+#env = gym.make('CarRacing-v0')
+#env = gym.make('HalfCheetah-v2')
 # Reproducability
 env.seed(1)
 
@@ -15,13 +17,16 @@ buffer = ReplayBuffer()
 #------------------------------#
 #------Hyperparameters---------#
 #------------------------------#
-
 num_episodes = 3
 num_steps = 200
-
+batch_size = 32
+max_size = 10000
 #------------------------------#
 #------Hyperparameters---------#
 #------------------------------#
+
+buffer = ReplayBuffer(batch_size, max_size)
+agent = DDPGAgent(buffer)
 
 s = env.reset()
 
@@ -31,7 +36,7 @@ for e in range(num_episodes):
         env.render()
 
         # Get action from Actor
-        a = actor.predict(s)
+        a = agent.take_action(s)
         a = env.action_space.sample()
 
         # Execute action, receive transition
@@ -41,6 +46,7 @@ for e in range(num_episodes):
         buffer.add_sample([s, a, r, s_next, done])
 
         # Train critic and actor?
+        agent.update()
 
         s = s_next
 

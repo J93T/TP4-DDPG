@@ -13,3 +13,13 @@ class Critic(nn.Module):
                                    nn.ReLU(),
                                    nn.Linear(num_hidden, 1),
                                    nn.Sigmoid())
+
+        self.target_model = nn.Sequential(nn.Linear(num_act + num_state, num_hidden),
+                                   nn.ReLU(),
+                                   nn.Linear(num_hidden, 1),
+                                   nn.Sigmoid())
+
+
+
+    def train(self, target):
+        pass

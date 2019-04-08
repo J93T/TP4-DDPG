@@ -17,9 +17,11 @@ class Actor(nn.Module):
                                    nn.Linear(num_hidden, 1),
                                    nn.Sigmoid())
 
-    def predict(self, state):
-        # Full exploration
-        action = random.uniform(-2, 2)
-        # needs to be list or array?
+        self.target_model = nn.Sequential(nn.Linear(num_act + num_state, num_hidden),
+                                   nn.ReLU(),
+                                   nn.Linear(num_hidden, 1),
+                                   nn.Sigmoid())
 
-        return [action]
+    def predict(self, state, target=False):
+        action = random.uniform(-2, 2)
+        return action
