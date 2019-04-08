@@ -28,6 +28,8 @@ class Actor(nn.Module):
 
     def predict(self, state, target=False):
 
+        state = Variable(torch.from_numpy(state)).float()
+
         if target:
             return self.target_model(state).detach().numpy()
         else:

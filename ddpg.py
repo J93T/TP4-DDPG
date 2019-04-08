@@ -30,8 +30,7 @@ class DDPGAgent():
 
     def take_action(self, state):
         # TODO Add noise according to OU-Process
-        s = Variable(torch.from_numpy(state)).float()
-        action = self.actor.predict(s, False)
+        action = self.actor.predict(state, False)
         action += self.noise.sample()
         return action
 
@@ -41,37 +40,25 @@ class DDPGAgent():
 
     def _critic_update(self, batch):
 
-        s = Variable(
-            torch.from_numpy(np.asarray([item[0] for item in batch]))).float()
 
-        #TODO make this clean, tensors only used in model files?
-        #a = Variable(
-        #    torch.from_numpy(np.asarray([item[1] for item in batch]))).float()
-
+        s = np.asarray([item[0] for item in batch])
         a = np.asarray([item[1] for item in batch])
-
+        r = np.expand_dims(np.asarray([item[2] for item in batch]),1)
         r = Variable(
-            torch.from_numpy(np.asarray([item[2] for item in batch]))).float().unsqueeze(1)
-
-
-        s_next = Variable(
-            torch.from_numpy(np.asarray([item[3] for item in batch]))).float()
-
+            torch.from_numpy(
+                np.asarray([item[2] for item in batch]))).float().unsqueeze(1)
+        s_next = np.asarray([item[3] for item in batch])
         target_actions = self.actor.predict(s_next, True)
         Q_val = self.critic.predict(s_next,target_actions, True)
         y_target = r + self.hp['gamma'] * Q_val
         y_pred = self.critic.predict(s, a, False)
-
         self.critic.train(y_pred, y_target)
 
     def _actor_update(self, batch):
 
-        s = Variable(
-            torch.from_numpy(np.asarray([item[0] for item in batch]))).float()
-        #TODO Use policy Gradient
+        s = np.asarray([item[0] for item in batch])
         pred_a1 = self.actor.predict(s, False)
         loss = -1*torch.sum(self.critic.predict(s, pred_a1))
-
         self.actor.train(loss)
 
 

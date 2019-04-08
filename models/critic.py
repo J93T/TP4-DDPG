@@ -4,8 +4,6 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 
-# Class creating the critic
-
 class Critic(nn.Module):
 
     def __init__(self, input_dim, output_dim, num_hidden):
@@ -30,13 +28,15 @@ class Critic(nn.Module):
 
     def predict(self, state, action, target=False):
 
+        state = Variable(torch.from_numpy(state)).float()
         actions = Variable(torch.from_numpy(action)).float()
+
         sa = torch.cat((state, actions), 1)
 
         if target:
-            return self.target_model(sa)#.detach()#.numpy()
+            return self.target_model(sa)#.detach().numpy()
         else:
-            return self.model(sa)#.detach()#.numpy()
+            return self.model(sa)#.detach().numpy()
 
     def train(self, y_pred, y_target):
 

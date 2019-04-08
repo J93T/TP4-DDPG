@@ -19,7 +19,7 @@ hyperparameter = {
     'num_hidden_critic': 128,
     'num_hidden_actor': 128,
     'gamma': 0.99,
-    'batch_size': 5,
+    'batch_size': 32,
     'max_buffer_size': 1e5,
     'tau': 0.001,
 }
@@ -43,6 +43,7 @@ for e in range(num_episodes):
 
         # Get action from Actor
         a = agent.take_action(s)
+
 
         # Execute action, receive reward
         s_next, r, done, _ = env.step(a)
