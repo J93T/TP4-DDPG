@@ -7,6 +7,7 @@ from ddpg import DDPGAgent
 env = gym.make('Pendulum-v0')
 #env = gym.make('CarRacing-v0')
 #env = gym.make('HalfCheetah-v2')
+#env = gym.make('LunarLanderContinuous-v2')
 # Reproducability
 env.seed(1)
 
@@ -17,8 +18,8 @@ buffer = ReplayBuffer()
 #------------------------------#
 #------Hyperparameters---------#
 #------------------------------#
-num_episodes = 3
-num_steps = 200
+num_episodes = 100
+num_steps = 500
 batch_size = 32
 max_size = 10000
 #------------------------------#
@@ -31,9 +32,10 @@ agent = DDPGAgent(buffer)
 s = env.reset()
 
 for e in range(num_episodes):
+    print(e)
     for step in range(num_steps):
 
-        env.render()
+        #env.render()
 
         # Get action from Actor
         a = agent.take_action(s)
@@ -44,6 +46,9 @@ for e in range(num_episodes):
 
         # Save transition
         buffer.add_sample([s, a, r, s_next, done])
+
+        batch = buffer.get_batch()
+
 
         # Train critic and actor?
         agent.update()
