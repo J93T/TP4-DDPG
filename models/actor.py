@@ -8,18 +8,18 @@ import random
 
 class Actor(nn.Module):
 
-    def __init__(self, num_act, num_state, num_hidden):
+    def __init__(self, input_dim, output_dim, num_hidden):
 
         super(Actor, self).__init__()
 
-        self.model = nn.Sequential(nn.Linear(num_act + num_state, num_hidden),
+        self.model = nn.Sequential(nn.Linear(input_dim, num_hidden),
                                    nn.ReLU(),
-                                   nn.Linear(num_hidden, 1),
+                                   nn.Linear(num_hidden, output_dim),
                                    nn.Sigmoid())
 
-        self.target_model = nn.Sequential(nn.Linear(num_act + num_state, num_hidden),
+        self.target_model = nn.Sequential(nn.Linear(input_dim, num_hidden),
                                    nn.ReLU(),
-                                   nn.Linear(num_hidden, 1),
+                                   nn.Linear(num_hidden, output_dim),
                                    nn.Sigmoid())
 
     def predict(self, state, target=False):

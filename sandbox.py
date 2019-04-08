@@ -11,28 +11,31 @@ env = gym.make('Pendulum-v0')
 # Reproducability
 env.seed(1)
 
-critic = Critic(1,2,3)
-actor = Actor(1,2,3)
-buffer = ReplayBuffer()
+print(env.action_space)
+exit()
+
 
 #------------------------------#
 #------Hyperparameters---------#
 #------------------------------#
+hyperparameter = {
+    'num_hidden_critic': 2,
+    'num_hidden_actor': 2,
+    'batch_size': 64,
+    'max_buffer_size': 1e5,
+    'tau': 0.001,
+}
 num_episodes = 100
 num_steps = 500
-batch_size = 32
-max_size = 10000
 #------------------------------#
 #------Hyperparameters---------#
 #------------------------------#
 
-buffer = ReplayBuffer(batch_size, max_size)
-agent = DDPGAgent(buffer)
+agent = DDPGAgent(env, hyperparameter)
 
 s = env.reset()
 
 for e in range(num_episodes):
-    print(e)
     for step in range(num_steps):
 
         #env.render()
@@ -45,10 +48,7 @@ for e in range(num_episodes):
         s_next, r, done, _ = env.step(a)
 
         # Save transition
-        buffer.add_sample([s, a, r, s_next, done])
-
-        batch = buffer.get_batch()
-
+        agent.buffer_update([s, a, r, s_next, done])
 
         # Train critic and actor?
         agent.update()
