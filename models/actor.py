@@ -25,7 +25,8 @@ class Actor(nn.Module):
                                    nn.Sigmoid())
 
     def predict(self, state, target=False):
-        state = np.reshape(state,(1,3))
-        s = Variable(torch.from_numpy(state)).float()
-        action = self.model(s).detach().numpy()
-        return action
+
+        if target:
+            return self.target_model(state).detach().numpy()
+        else:
+            return self.model(state).detach().numpy()

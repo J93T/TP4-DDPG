@@ -16,9 +16,10 @@ env.seed(1)
 #------Hyperparameters---------#
 #------------------------------#
 hyperparameter = {
-    'num_hidden_critic': 2,
-    'num_hidden_actor': 2,
-    'batch_size': 64,
+    'num_hidden_critic': 128,
+    'num_hidden_actor': 128,
+    'gamma': 0.99,
+    'batch_size': 5,
     'max_buffer_size': 1e5,
     'tau': 0.001,
 }
@@ -32,7 +33,10 @@ agent = DDPGAgent(env, hyperparameter)
 
 s = env.reset()
 
+
+
 for e in range(num_episodes):
+    print("starting episode ", e)
     for step in range(num_steps):
 
         #env.render()
@@ -40,14 +44,14 @@ for e in range(num_episodes):
         # Get action from Actor
         a = agent.take_action(s)
 
-        # Execute action, receive transition
+        # Execute action, receive reward
         s_next, r, done, _ = env.step(a)
 
         # Save transition
         agent.buffer_update([s, a, r, s_next, done])
 
         # Train critic and actor?
-        #agent.update()
+        agent.update()
 
         s = s_next
 
