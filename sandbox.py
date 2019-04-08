@@ -31,28 +31,33 @@ num_steps = 500
 
 agent = DDPGAgent(env, hyperparameter)
 
-s = env.reset()
-
 
 
 for e in range(num_episodes):
     print("starting episode ", e)
+    ret = 0
+    s = env.reset()
     for step in range(num_steps):
 
-        #env.render()
+        env.render()
 
         # Get action from Actor
         a = agent.take_action(s)
 
         # Execute action, receive reward
         s_next, r, done, _ = env.step(a)
+        ret += r
 
         # Save transition
         agent.buffer_update([s, a, r, s_next, done])
+
+        if done:
+            break
 
         # Train critic and actor?
         agent.update()
 
         s = s_next
+    print(ret)
 
 env.close()

@@ -24,6 +24,7 @@ class Critic(nn.Module):
                                    nn.Linear(num_hidden, output_dim),
                                    nn.Sigmoid())
 
+        self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(),0.001)
 
 
@@ -39,7 +40,7 @@ class Critic(nn.Module):
 
     def train(self, y_pred, y_target):
 
-        loss = F.smooth_l1_loss(y_pred, y_target)
+        loss = self.criterion(y_pred, y_target)
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()

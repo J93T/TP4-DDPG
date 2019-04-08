@@ -24,9 +24,16 @@ class Actor(nn.Module):
                                    nn.Linear(num_hidden, output_dim),
                                    nn.Sigmoid())
 
+        self.optimizer = torch.optim.Adam(self.model.parameters(),0.001)
+
     def predict(self, state, target=False):
 
         if target:
             return self.target_model(state).detach().numpy()
         else:
             return self.model(state).detach().numpy()
+
+    def train(self, loss):
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()

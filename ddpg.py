@@ -4,6 +4,7 @@ from torch.autograd import Variable
 from models.critic import Critic
 from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
+from random_process import OrnsteinUhlenbeckProcess
 
 class DDPGAgent():
 
@@ -23,11 +24,15 @@ class DDPGAgent():
         self.dataset = ReplayBuffer(self.hp['batch_size'],
                                     self.hp['max_buffer_size'])
 
+        self.noise = OrnsteinUhlenbeckProcess(1)
+        self.noise.reset_states()
+
 
     def take_action(self, state):
         # TODO Add noise according to OU-Process
         s = Variable(torch.from_numpy(state)).float()
         action = self.actor.predict(s, False)
+        action += self.noise.sample()
         return action
 
     def buffer_update(self, sample):
@@ -60,8 +65,15 @@ class DDPGAgent():
         self.critic.train(y_pred, y_target)
 
     def _actor_update(self, batch):
+
+        s = Variable(
+            torch.from_numpy(np.asarray([item[0] for item in batch]))).float()
         #TODO Use policy Gradient
-        pass
+        pred_a1 = self.actor.predict(s, False)
+        loss = -1*torch.sum(self.critic.predict(s, pred_a1))
+
+        self.actor.train(loss)
+
 
     def update(self):
 
