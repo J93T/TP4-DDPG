@@ -5,6 +5,7 @@ from models.critic import Critic
 from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
 from random_process import OrnsteinUhlenbeckProcess
+import random
 
 class DDPGAgent():
 
@@ -27,12 +28,16 @@ class DDPGAgent():
         self.noise = OrnsteinUhlenbeckProcess(1)
         self.noise.reset_states()
 
+    def take_action(self,state,eps,env):
 
-    def take_action(self, state):
+        if np.random.random() > eps:
         # TODO Add noise according to OU-Process
-        action = self.actor.predict(state, False)
-        action += self.noise.sample()
-        return action
+            action = self.actor.predict(state, False)
+            #print("Explot")
+        else:
+            action =random.randrange(env.action_space.shape[0])
+            #print("Explor")
+        return action+ self.noise.sample()
 
     def buffer_update(self, sample):
 
@@ -58,7 +63,9 @@ class DDPGAgent():
 
         s = np.asarray([item[0] for item in batch])
         pred_a1 = self.actor.predict(s, False)
-        loss = -1*torch.sum(self.critic.predict(s, pred_a1))
+        #loss = -1*torch.sum(self.critic.predict(s, pred_a1))
+        loss = torch.mean(-self.critic.predict(s, pred_a1))
+
         self.actor.train(loss)
 
 

@@ -6,11 +6,12 @@ from ddpg import DDPGAgent
 import numpy as np
 
 env = gym.make('Pendulum-v0')
-#env = gym.make('CarRacing-v0')
+#env = gym.make('CarRacing-v0')E:\Work\polymtl.ca\Courses\INF8225 - Artificial Intelligence Probabilistic and Learning Techniques\Assignment\TP3\all papers
 #env = gym.make('HalfCheetah-v2')
 #env = gym.make('LunarLanderContinuous-v2')
 # Reproducability
 env.seed(1)
+
 
 #------------------------------#
 #------Hyperparameters---------#
@@ -31,19 +32,23 @@ num_steps = 500
 
 agent = DDPGAgent(env, hyperparameter)
 
-
-
+eps_threshold=1 #starting epsilon
+eps_min=0.01
+eps_degrad=0.9
 for e in range(num_episodes):
-    print("starting episode ", e)
+    #print("starting episode ", e)
     ret = 0
     s = env.reset()
+    if eps_threshold > eps_min:
+            eps_threshold *= eps_degrad
     for step in range(num_steps):
 
         env.render()
 
         # Get action from Actor
-        a = agent.take_action(s)
 
+        a = agent.take_action(s,eps_threshold,env)
+        #print(a)
 
         # Execute action, receive reward
         s_next, r, done, _ = env.step(a)
@@ -59,6 +64,7 @@ for e in range(num_episodes):
         agent.update()
 
         s = s_next
-    print(ret)
+    #print("ret",ret)
+    print("episode:{}/{},reward:{},eps:{:.2}".format(e,num_episodes,ret,eps_threshold))
 
 env.close()

@@ -27,7 +27,6 @@ class ReplayBuffer(object):
             self.elements.pop(0)
             self.elements.append(sample)
 
-
     def get_batch(self):
         self.batch_idx = self._random_sample(self.batch_size, 0, self.length)
         batch = [self.elements[i] for i in self.batch_idx]
