@@ -1,43 +1,48 @@
-import numpy as np
 import torch
 from torch.autograd import Variable
 from models.critic import Critic
 from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
 from random_process import OrnsteinUhlenbeckProcess
-import random
+
 
 class DDPGAgent():
 
     def __init__(self, env, hp):
 
         #maybe a cleaner way to do this?
+        self.env = env
         self.hp = hp
         # critic input dim = action_dim+observation_dim
-        self.critic = Critic(env.action_space.shape[0]
-                             + env.observation_space.shape[0],
-                             1,
-                             hp['num_hidden_critic'])
+        self.critic = Critic(env.observation_space.shape[0] ,
+                             env.action_space.shape[0],hp)
+
+        self.critict = Critic(env.observation_space.shape[0],
+                             env.action_space.shape[0],hp)
 
         self.actor = Actor(env.observation_space.shape[0],
                            env.action_space.shape[0],
-                           hp['num_hidden_actor'])
+                           env.action_space.high[0],hp)
+
+
+        self.actort = Actor(env.observation_space.shape[0],
+                           env.action_space.shape[0],
+                           env.action_space.high[0],hp)
+
+
         self.dataset = ReplayBuffer(self.hp['batch_size'],
                                     self.hp['max_buffer_size'])
 
         self.noise = OrnsteinUhlenbeckProcess(1)
         self.noise.reset_states()
 
-    def take_action(self,state,eps,env):
 
-        if np.random.random() > eps:
-        # TODO Add noise according to OU-Process
-            action = self.actor.predict(state, False)
-            #print("Explot")
-        else:
-            action =random.randrange(env.action_space.shape[0])
-            #print("Explor")
-        return action+ self.noise.sample()
+    def take_action(self,state):
+
+        state = Variable(torch.from_numpy(state)).float()
+        action = self.actor.predict(state)
+        return action.detach().numpy() \
+            + (self.noise.sample() * self.env.action_space.high[0])
 
     def buffer_update(self, sample):
 
@@ -45,27 +50,21 @@ class DDPGAgent():
 
     def _critic_update(self, batch):
 
-
-        s = np.asarray([item[0] for item in batch])
-        a = np.asarray([item[1] for item in batch])
-        r = np.expand_dims(np.asarray([item[2] for item in batch]),1)
-        r = Variable(
-            torch.from_numpy(
-                np.asarray([item[2] for item in batch]))).float().unsqueeze(1)
-        s_next = np.asarray([item[3] for item in batch])
-        target_actions = self.actor.predict(s_next, True)
-        Q_val = self.critic.predict(s_next,target_actions, True)
+        s = batch[0]
+        a = batch[1]
+        r = batch[2]
+        s_next = batch[3]
+        target_actions = self.actort.predict(s_next)
+        Q_val = self.critict.predict(s_next,target_actions)
         y_target = r + self.hp['gamma'] * Q_val
-        y_pred = self.critic.predict(s, a, False)
+        y_pred = self.critic.predict(s,a)
         self.critic.train(y_pred, y_target)
 
     def _actor_update(self, batch):
 
-        s = np.asarray([item[0] for item in batch])
-        pred_a1 = self.actor.predict(s, False)
-        #loss = -1*torch.sum(self.critic.predict(s, pred_a1))
-        loss = torch.mean(-self.critic.predict(s, pred_a1))
-
+        s = batch[0]
+        pred_a = self.actor.predict(s)
+        loss = torch.mean(-self.critic.predict(s, pred_a))
         self.actor.train(loss)
 
 
@@ -78,11 +77,11 @@ class DDPGAgent():
         self._critic_update(batch)
         self._actor_update(batch)
         self._target_update(self.hp['tau'],
-                            self.critic.target_model,
-                            self.critic.model)
+                            self.critict,
+                            self.critic)
         self._target_update(self.hp['tau'],
-                            self.actor.target_model,
-                            self.actor.model)
+                            self.actort,
+                            self.actort)
 
     def _target_update(self, tau, target_network, network):
         for target_param, param in zip(target_network.parameters(), network.parameters()):

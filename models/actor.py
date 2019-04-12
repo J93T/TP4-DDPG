@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
-import random
-from torch.autograd import Variable
-import numpy as np
+import torch.nn.functional as F
+
 
 # Class creating the Actor
 # https://pytorch.org/docs/stable/nn.html
@@ -10,30 +9,30 @@ import numpy as np
 
 class Actor(nn.Module):
 
-    def __init__(self, input_dim, output_dim, num_hidden):
+    def __init__(self, state_dim, action_dim, scale, hp):
 
         super(Actor, self).__init__()
 
-        self.model = nn.Sequential(nn.Linear(input_dim, num_hidden),
-                                   nn.ReLU(),
-                                   nn.Linear(num_hidden, output_dim),
-                                   nn.Sigmoid())
+        self.state_dim = state_dim
+        self.action_dim = action_dim
+        self.scale = scale
 
-        self.target_model = nn.Sequential(nn.Linear(input_dim, num_hidden),
-                                   nn.ReLU(),
-                                   nn.Linear(num_hidden, output_dim),
-                                   nn.Sigmoid())
+        self.l1 = nn.Linear(state_dim,
+                            hp['num_hidden_actor_l1'])
 
-        self.optimizer = torch.optim.Adam(self.model.parameters(),0.001)
+        self.l2 = nn.Linear(hp['num_hidden_actor_l1'],
+                            hp['num_hidden_actor_l2'])
 
-    def predict(self, state, target=False):
+        self.l3 = nn.Linear(hp['num_hidden_actor_l2'],action_dim)
 
-        state = Variable(torch.from_numpy(state)).float()
+        self.optimizer = torch.optim.Adam(self.parameters(),hp['lr_actor'])
 
-        if target:
-            return self.target_model(state).detach().numpy()
-        else:
-            return self.model(state).detach().numpy()
+    def predict(self, state):
+
+        out = F.relu(self.l1(state))
+        out = F.relu(self.l2(out))
+        action = torch.tanh(self.l3(out))
+        return action * self.scale
 
     def train(self, loss):
         self.optimizer.zero_grad()

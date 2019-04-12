@@ -1,5 +1,10 @@
 import numpy as np
 import random
+from torch.autograd import Variable
+import torch
+
+
+
 
 class ReplayBuffer(object):
     """
@@ -30,7 +35,21 @@ class ReplayBuffer(object):
     def get_batch(self):
         self.batch_idx = self._random_sample(self.batch_size, 0, self.length)
         batch = [self.elements[i] for i in self.batch_idx]
-        return batch
+
+        s = Variable(
+            torch.from_numpy(
+                np.asarray([item[0] for item in batch]))).float()
+        a = Variable(
+            torch.from_numpy(
+                np.asarray([item[1] for item in batch]))).float()
+        r = np.expand_dims(np.asarray([item[2] for item in batch]),1)
+        r = Variable(
+            torch.from_numpy(
+                np.asarray([item[2] for item in batch]))).float().unsqueeze(1)
+        s_next = Variable(
+            torch.from_numpy(
+                np.asarray([item[3] for item in batch]))).float()
+        return [s, a, r, s_next]
 
 
     def _random_sample(self,count, start, stop, step=1):
