@@ -49,7 +49,11 @@ class ReplayBuffer(object):
         s_next = Variable(
             torch.from_numpy(
                 np.asarray([item[3] for item in batch]))).float()
-        return [s, a, r, s_next]
+        done = Variable(
+            torch.from_numpy(
+                np.asarray([item[4] for item in batch],dtype=np.uint8))).float().unsqueeze(1)
+
+        return [s, a, r, s_next, done]
 
 
     def _random_sample(self,count, start, stop, step=1):
