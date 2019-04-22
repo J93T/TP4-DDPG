@@ -30,11 +30,11 @@ class Critic(nn.Module):
         self.l1a.weight.data = fanin_init(self.l1a.weight.data.size())
 
 
-        self.l4 = nn.Linear(2 * hp['num_hidden_critic_l1'],
-                            hp['num_hidden_critic_l2'])
-
-        #self.l4 = nn.Linear(hp['num_hidden_critic_l1'] + action_dim,
+        #self.l4 = nn.Linear(2 * hp['num_hidden_critic_l1'],
         #                    hp['num_hidden_critic_l2'])
+
+        self.l4 = nn.Linear(hp['num_hidden_critic_l1'] + action_dim,
+                            hp['num_hidden_critic_l2'])
         self.l4.weight.data = fanin_init(self.l4.weight.data.size())
 
 
@@ -42,21 +42,21 @@ class Critic(nn.Module):
         self.l5.weight.data.uniform_(-EPS,EPS)
 
         self.criterion = nn.MSELoss()
-        self.optimizer = torch.optim.Adam(self.parameters(),hp['lr_critic'])
+        self.optimizer = torch.optim.Adam(self.parameters(),hp['lr_critic'],weight_decay=0.01)
 
     def predict(self, state, action):
 
-        out_s = F.relu(self.l1s_bn(self.l1s(state)))
-        out_a = F.relu(self.l1a(action))
-        out = torch.cat((out_s,out_a),dim=1)
-        out = F.relu(self.l4(out))
-        return self.l5(out)
-
         # out_s = F.relu(self.l1s_bn(self.l1s(state)))
-        # #out_a = F.relu(self.l1a(action))
-        # out = torch.cat((out_s,action),dim=1)
+        # out_a = F.relu(self.l1a(action))
+        # out = torch.cat((out_s,out_a),dim=1)
         # out = F.relu(self.l4(out))
         # return self.l5(out)
+
+        out_s = F.relu(self.l1s_bn(self.l1s(state)))
+        # #out_a = F.relu(self.l1a(action))
+        out = torch.cat((out_s,action),dim=1)
+        out = F.relu(self.l4(out))
+        return self.l5(out)
 
     def train(self, y_pred, y_target):
 

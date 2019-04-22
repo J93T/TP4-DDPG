@@ -1,0 +1,13 @@
+hyperparameter = {
+    'num_hidden_critic_l1': 128,
+    'num_hidden_critic_l2': 64,
+    'num_hidden_actor_l1': 128,
+    'num_hidden_actor_l2': 64,
+    'lr_actor': 0.0001,
+    'lr_critic': 0.001,
+    'gamma': 0.99,
+    'batch_size': 128,
+    'max_buffer_size': 1e6,
+    'tau': 0.005,
+    'noise_sigma': 0.2,
+}
