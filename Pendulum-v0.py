@@ -6,13 +6,13 @@ from ddpg import DDPGAgent
 from rendering import rendering
 import numpy as np
 
-#env = gym.make('Pendulum-v0')
+env = gym.make('Pendulum-v0')
 #env = gym.make('CarRacing-v0')
 #env = gym.make('HalfCheetah-v2')
 #env = gym.make('BipedalWalker-v2')
 #env = gym.make('InvertedPendulum-v2')
 #env = gym.make('MountainCarContinuous-v0')
-env = gym.make('LunarLanderContinuous-v2')
+#env = gym.make('LunarLanderContinuous-v2')
 # Reproducability
 #env.seed(1)
 #print(env.action_space)
@@ -22,16 +22,16 @@ env = gym.make('LunarLanderContinuous-v2')
 #------------------------------#
 
 hyperparameter = {
-    'num_hidden_critic_l1': 256,
-    'num_hidden_critic_l2': 128,
-    'num_hidden_actor_l1': 256,
-    'num_hidden_actor_l2': 128,
+    'num_hidden_critic_l1': 200,
+    'num_hidden_critic_l2': 100,
+    'num_hidden_actor_l1': 200,
+    'num_hidden_actor_l2': 100,
     'lr_actor': 0.0001,
     'lr_critic': 0.001,
     'gamma': 0.995,
     'batch_size': 128,
     'max_buffer_size': 1e6,
-    'tau': 0.001,
+    'tau': 0.01,
 
 }
 num_episodes = 200
