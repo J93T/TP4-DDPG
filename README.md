@@ -9,7 +9,7 @@ paper: https://arxiv.org/abs/1509.02971
 # Quickstart
 Clone repository and create venv with:
 ```
-virtualenv <env_name>
+python3.7 -m virtualenv <env_name>
 source <env_name>/bin/activate
 (<env_name>)$ pip install -r path/to/requirements.txt
 ```
