@@ -27,3 +27,7 @@ New models can be trained running
 python sandbox.py
 ```
 Rendering can be enabled/disabled by pressing "Enter" in the console.
+
+# Performance
+
+![Pendulum-v0](gifs/pend.gif)
