@@ -20,3 +20,10 @@ python run_trained.py <env>
 ```
 using "p","mc" or "ll" for the different environments
 Pendulum Swing up, Mountain Car and Lunar Lander.
+
+New models can be trained running
+
+```
+python sandbox.py
+```
+Rendering can be enabled/disabled by pressing "Enter" in the console.
