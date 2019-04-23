@@ -11,13 +11,13 @@ if sys.argv[1] == 'll':
     model_path = 'trained_models/Lunar_Lander_200episodes/'
     env = gym.make('LunarLanderContinuous-v2')
     hyperparameter = {
-    'num_hidden_critic_l1': 300,
-    'num_hidden_critic_l2': 200,
-    'num_hidden_actor_l1': 300,
-    'num_hidden_actor_l2': 200,
+    'num_hidden_critic_l1': 256,
+    'num_hidden_critic_l2': 128,
+    'num_hidden_actor_l1': 256,
+    'num_hidden_actor_l2': 128,
     'lr_actor': 0.0001,
     'lr_critic': 0.001,
-    'gamma': 0.99,
+    'gamma': 0.995,
     'batch_size': 128,
     'max_buffer_size': 1e6,
     'tau': 0.01,
