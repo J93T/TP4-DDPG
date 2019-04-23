@@ -116,8 +116,8 @@ class DDPGAgent():
 
     def save_models(self, episode):
 
-        torch.save(self.target_actor.state_dict(), './trained_models/' + str(episode) + '_actor.pt')
-        torch.save(self.target_critic.state_dict(), './trained_models/' + str(episode) + '_critic.pt')
+        torch.save(self.target_actor.state_dict(), './trained_models/' + str(episode) + 'actor.pt')
+        torch.save(self.target_critic.state_dict(), './trained_models/' + str(episode) + 'critic.pt')
         print('Models Saved!')
 
     def load_models(self, path):

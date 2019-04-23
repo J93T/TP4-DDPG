@@ -4,7 +4,7 @@ from models.critic import Critic
 from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
 from ddpg import DDPGAgent
-from rendering import rendering
+from util.rendering import rendering
 import numpy as np
 
 if sys.argv[1] == 'll':

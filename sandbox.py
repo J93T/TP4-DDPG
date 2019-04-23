@@ -6,8 +6,8 @@ from ddpg import DDPGAgent
 from util.rendering import rendering
 import numpy as np
 
-env = gym.make('Pendulum-v0')
-#env = gym.make('MountainCarContinuous-v0')
+#env = gym.make('Pendulum-v0')
+env = gym.make('MountainCarContinuous-v0')
 #env = gym.make('LunarLanderContinuous-v2')
 
 #------------------------------#
@@ -15,16 +15,16 @@ env = gym.make('Pendulum-v0')
 #------------------------------#
 
 hyperparameter = {
-    'num_hidden_critic_l1': 200,
-    'num_hidden_critic_l2': 100,
-    'num_hidden_actor_l1': 200,
-    'num_hidden_actor_l2': 100,
+    'num_hidden_critic_l1': 128,
+    'num_hidden_critic_l2': 64,
+    'num_hidden_actor_l1': 128,
+    'num_hidden_actor_l2': 64,
     'lr_actor': 0.0001,
     'lr_critic': 0.001,
     'gamma': 0.99,
-    'batch_size': 64,
+    'batch_size': 128,
     'max_buffer_size': 1e6,
-    'tau': 0.01,
+    'tau': 0.005,
     'noise_sigma': 0.2,
 }
 
@@ -32,7 +32,7 @@ hyperparameter = {
 #------Hyperparameters---------#
 #------------------------------#
 
-num_episodes = 200
+num_episodes = 600
 num_steps = 1000
 
 for i in range(10):
