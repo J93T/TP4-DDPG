@@ -28,6 +28,16 @@ python sandbox.py
 ```
 Rendering can be enabled/disabled by pressing "Enter" in the console.
 
-# Performance
+# Performance on OpenAI Environments
+
+## Pendulum-v0 after 125 Episodes
 
 ![Pendulum-v0](gifs/pend.gif)
+
+## MountainCarContinuous-v0 after 150 Episodes
+
+![MountainCarContinuous-v0](gifs/mc.gif)
+
+## LunarLanderContinuous-v2 after 200 Episodes
+
+![LunarLanderContinuous-v2](gifs/ll.gif)
