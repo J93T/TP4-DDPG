@@ -5,7 +5,7 @@ hyperparameter = {
     'num_hidden_actor_l2': 200,
     'lr_actor': 0.0001,
     'lr_critic': 0.001,
-    'gamma': 0.99,
+    'gamma': 0.995,
     'batch_size': 128,
     'max_buffer_size': 1e6,
     'tau': 0.01,

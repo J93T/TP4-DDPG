@@ -41,8 +41,10 @@ class Actor(nn.Module):
 
     def predict(self, state):
 
-        out = F.relu(self.l1_bn(self.l1(state)))
-        out = F.relu(self.l2_bn(self.l2(out)))
+        out = F.relu(self.l1_bn(self.l1(state))) # With Batchnorm
+        out = F.relu(self.l2_bn(self.l2(out)))   # With Batchnorm
+        #out = F.relu(self.l1(state)) # Without Batchnorm
+        #out = F.relu(self.l2(out))   # Without Batchnorm
         action = torch.tanh(self.l3(out))
         return action * self.scale
 

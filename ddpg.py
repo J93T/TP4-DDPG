@@ -4,7 +4,7 @@ from torch.autograd import Variable
 from models.critic import Critic
 from models.actor import Actor
 from models.replay_buffer import ReplayBuffer
-from random_process import OrnsteinUhlenbeckProcess
+from util.random_process import OrnsteinUhlenbeckProcess
 
 
 class DDPGAgent():
@@ -28,7 +28,6 @@ class DDPGAgent():
                            env.action_space.shape[0],
                            env.action_space.high[0],hp)
 
-
         self.dataset = ReplayBuffer(self.hp['batch_size'],
                                     self.hp['max_buffer_size'])
 
@@ -46,20 +45,6 @@ class DDPGAgent():
 
         return action.detach().numpy() \
             + (self.noise.sample() * self.env.action_space.high[0])
-
-    def warmup(self, steps, num_steps):
-        steps_done = 0
-        while steps_done < steps:
-            s = self.env.reset()
-            for step in range(num_steps):
-                a = self.take_action(s, greedy=False)
-                s_next, r, done, _ = self.env.step(a)
-                self.buffer_update([s, a, r/10, s_next, 1 - done])
-                if done:
-                    break
-                s = s_next
-            steps_done += 1
-        print("Warmup Done!")
 
     def collect(self, n_episodes, max_episodes):
 
